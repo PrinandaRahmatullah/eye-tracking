@@ -8,7 +8,7 @@ var textLog = document.getElementById("log");
 
 window.onload = async function () {
     webgazer.showVideoPreview(false) /* shows all video previews */
-        .showPredictionPoints(false) /* shows a square every 100 milliseconds where current prediction is */
+        .showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
         .applyKalmanFilter(true); /* Kalman Filter defaults to on. Can be toggled by user. */
 
     //start the webgazer tracker
@@ -18,7 +18,7 @@ window.onload = async function () {
             //   console.log(data); /* data is an object containing an x and y key which are the x and y prediction coordinates (no bounds limiting) */
             //   console.log(clock); /* elapsed time in milliseconds since webgazer.begin() was called */
             if (data == null) {
-                console.log("Warning : No Face Detected!");
+                // console.log("Warning : No Face Detected!");
                 faceDetected = false;
             } else {
                 // not focus
@@ -30,7 +30,7 @@ window.onload = async function () {
                 ) {
                     if (timeCounter === null || !timeCounter) {
                         timeCounter = new Date();
-                        textLog.innerHTML += "Warning : Anda tidak fokus!<br>";
+                        // textLog.innerHTML += "Warning : Anda tidak fokus!<br>";
                         // console.log("Warning : Anda tidak fokus!");
                         recordOn = true;
 
@@ -51,14 +51,14 @@ window.onload = async function () {
                             //     secondsDifference +
                             //     " seconds"
                             // );
-                            textLog.innerHTML += "Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + secondsDifference + " seconds<br>";
+                            // textLog.innerHTML += "Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + secondsDifference + " seconds<br>";
                             saveToBE = true;
                             // TODO : compile, upload record
 
                         } else {
                             // Belum cukup syarat
                             // console.log("Warning : Delete recorded data! - " + secondsDifference + " seconds");
-                            textLog.innerHTML += "Warning : Delete recorded data! - " + secondsDifference + " seconds<br>";
+                            // textLog.innerHTML += "Warning : Delete recorded data! - " + secondsDifference + " seconds<br>";
                         }
                         // TODO : delete record
 

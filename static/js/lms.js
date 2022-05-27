@@ -19,7 +19,7 @@ window.onload = async function () {
         .setGazeListener(function (data, elapsedTime) {
             if (data == null) {
                 // console.log("Warning : No Face Detected!");
-                textLog.innerHTML += "Warning : No Face Detected!<br>";
+                textLog.innerHTML = "Warning : No Face Detected!<br>" + textLog.innerHTML;
                 faceDetected = false;
             } else {
                 // not focus
@@ -31,7 +31,7 @@ window.onload = async function () {
                 ) {
                     if (timeCounter === null || !timeCounter) {
                         timeCounter = new Date();
-                        textLog.innerHTML += "Warning : Anda tidak fokus!<br>";
+                        textLog.innerHTML = "Warning : Anda tidak fokus!<br>" + textLog.innerHTML;
                         // console.log("Warning : Anda tidak fokus!");
                         recordOn = true;
 
@@ -52,14 +52,14 @@ window.onload = async function () {
                             //     secondsDifference +
                             //     " seconds"
                             // );
-                            textLog.innerHTML += "Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + secondsDifference + " seconds<br>";
+                            textLog.innerHTML = "Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + secondsDifference + " seconds<br>" + textLog.innerHTML;
                             saveToBE = true;
                             // TODO : compile, upload record
 
                         } else {
                             // Belum cukup syarat
                             // console.log("Warning : Delete recorded data! - " + secondsDifference + " seconds");
-                            textLog.innerHTML += "Warning : Delete recorded data! - " + secondsDifference + " seconds<br>";
+                            textLog.innerHTML = "Warning : Delete recorded data! - " + secondsDifference + " seconds<br>" + textLog.innerHTML;
                         }
                         // TODO : delete record
 

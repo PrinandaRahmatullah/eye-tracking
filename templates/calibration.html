@@ -32,17 +32,18 @@ Instructions on use can be found in the README repository.
         <script src="static/js/precision_calculation.js"></script>
         <script src="static/js/precision_store_points.js"></script>
 
-        <li id="Accuracy" style="display: none;"><a>Not yet Calibrated</a></li>
 
         <nav id="webgazerNavbar" class="navbar navbar-default navbar-fixed-top">
           <div class="container-fluid">
             <div class="navbar-header">
+              <!-- The hamburger menu button -->
               <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
                 <span class="icon-bar">Menu</span>
               </button>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
               <ul class="nav navbar-nav">
+                <!-- Accuracy -->
                 <li id="Accuracy"><a>Not yet Calibrated</a></li>
                 <li><a onclick="Restart()" href="#">Recalibrate</a></li>
                 <li><a onclick="webgazer.applyKalmanFilter(!webgazer.params.applyKalmanFilter)" href="#">Toggle Kalman Filter</a></li>
