@@ -7,10 +7,22 @@ let saveToBE = false; // saving to backend
 
 var textLog = document.getElementById("log");
 
+// Recording variable
+let camera_stream = null;
+let media_recorder = null;
+let blobs_recorded = [];
+let video_local = null;
+
 window.onload = async function () {
     webgazer.showVideoPreview(false) /* shows all video previews */
         .showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
         .applyKalmanFilter(true);
+
+    // init camera stream
+    camera_stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
+    });
 
     // Webgazer activated
     await webgazer
@@ -35,6 +47,31 @@ window.onload = async function () {
                         // console.log("Warning : Anda tidak fokus!");
                         recordOn = true;
 
+                        // set MIME type of recording as video/webm
+                        media_recorder = new MediaRecorder(camera_stream, {
+                            mimeType: "video/webm",
+                        });
+
+                        // event : new recorded video blob available
+                        media_recorder.addEventListener("dataavailable", function (e) {
+                            blobs_recorded.push(e.data);
+                        });
+
+                        // event : recording stopped & all blobs sent
+                        media_recorder.addEventListener("stop", function () {
+                            // create local object URL from the recorded video blobs
+                            video_local = URL.createObjectURL(
+                                new Blob(blobs_recorded, {
+                                    type: "video/webm"
+                                })
+                            );
+                            // download_link.href = video_local;
+                        });
+
+                        // start recording with each recorded blob having 1 second video
+                        media_recorder.start(1000);
+
+
                     }
 
                     focusState = false;
@@ -42,29 +79,33 @@ window.onload = async function () {
                 // back to focus
                 else {
                     if (timeCounter && timeCounter !== null) {
+
+                        // stop record
+                        media_recorder.stop();
+
                         // timer on
                         let secondsDifference = parseFloat(
                             (new Date() - timeCounter) / 1000
                         );
+
                         if (secondsDifference > 5) {
-                            // console.log(
-                            //     "Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " +
-                            //     secondsDifference +
-                            //     " seconds"
-                            // );
+                            // console.log("Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + secondsDifference + " seconds");
                             textLog.innerHTML = "Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + secondsDifference + " seconds<br>" + textLog.innerHTML;
                             saveToBE = true;
+
                             // TODO : compile, upload record
+                            console.log(video_local);
 
                         } else {
                             // Belum cukup syarat
                             // console.log("Warning : Delete recorded data! - " + secondsDifference + " seconds");
                             textLog.innerHTML = "Warning : Delete recorded data! - " + secondsDifference + " seconds<br>" + textLog.innerHTML;
                         }
-                        // TODO : delete record
-
                         timeCounter = null;
                         recordOn = false;
+
+                        // TODO : delete record
+                        blobs_recorded = [];
                     }
 
                     focusState = true;
@@ -130,18 +171,18 @@ function Restart() {
  * Sets store_points to true, so all the occuring prediction
  * points are stored
  */
-function store_points_variable(){
+function store_points_variable() {
     webgazer.params.storingPoints = true;
-  }
-  
-  /*
-   * Sets store_points to false, so prediction points aren't
-   * stored any more
-   */
-  function stop_storing_points_variable(){
+}
+
+/*
+ * Sets store_points to false, so prediction points aren't
+ * stored any more
+ */
+function stop_storing_points_variable() {
     webgazer.params.storingPoints = false;
-  }
-  
+}
+
 
 
 
