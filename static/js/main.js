@@ -6,8 +6,17 @@ let saveToBE = false; // saving to backend
 
 var textLog = document.getElementById("log");
 
+let tracker = null;
+var eyeRight = null;
+var eyeLeft = null;
+var eyeRightX = null;
+var eyeRightY = null;
+var eyeLeftX = null;
+var eyeLeftY = null;
+var currentWidthELER = null;
+
 window.onload = async function () {
-    webgazer.showVideoPreview(false) /* shows all video previews */
+    webgazer.showVideoPreview(true) /* shows all video previews */
         .showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
         .applyKalmanFilter(true); /* Kalman Filter defaults to on. Can be toggled by user. */
 
@@ -22,6 +31,28 @@ window.onload = async function () {
                 faceDetected = false;
             } else {
                 // not focus
+
+                // DIRECTION : WORKED
+                tracker = webgazer.getTracker(); // Hidung
+
+                eyeRight = tracker.getPositions()[33]; // mata kanan
+                eyeLeft = tracker.getPositions()[263]; // mata kiri
+
+                eyeRightX = eyeRight[0];
+                eyeRightY = eyeRight[1];
+
+                eyeLeftX = eyeLeft[0];
+                eyeLeftY = eyeLeft[1];
+                
+                currentWidthELER = eyeLeftX - eyeRightX;
+                console.log(Math.round((250 * 33) / currentWidthELER) + " cm");
+                
+                // if (currentWidthELER > 230) {
+                //     console.log("Wajah Anda terlalu dekat dengan layar");
+                // } else if (currentWidthELER < 120) {
+                //     console.log("Wajah Anda terlalu jauh dari layar");
+                // }
+
                 if (
                     data.x <= 0 ||
                     data.x >= screen.width ||
