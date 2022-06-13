@@ -5,13 +5,36 @@ let focusState = false; // pop indikasi nyontek
 let recordOn = false;
 let saveToBE = false; // saving to backend 
 
-var textLog = document.getElementById("log");
+let textLog = document.getElementById("log");
 
 // Recording variable
 let camera_stream = null;
 let media_recorder = null;
 let blobs_recorded = [];
 let video_local = null;
+
+// face direction 
+let tracker = null;
+let nose = null;
+let eyeRight = null;
+let eyeLeft = null;
+let topLip = null;
+let noseX = null;
+let noseY = null;
+let eyeRightX = null;
+let eyeRightY = null;
+let eyeLeftX = null;
+let eyeLeftY = null;
+let currentWidthELER = null;
+
+var noseEyeRightX = null;
+var noseEyeLeftX = null;
+var comparisonX = null;
+var percentageX = null;
+
+var noseEyeY = null;
+var noseTopLipY = null;
+var comparisonY = null;
 
 window.onload = async function () {
     webgazer.showVideoPreview(false) /* shows all video previews */
@@ -35,11 +58,40 @@ window.onload = async function () {
                 faceDetected = false;
             } else {
                 // not focus
+
+                // face direction
+                tracker = webgazer.getTracker();
+                nose = tracker.getPositions()[1]; //hidung
+                eyeRight = tracker.getPositions()[33]; // mata kanan
+                eyeLeft = tracker.getPositions()[263]; // mata kiri
+                topLip = tracker.getPositions()[0];
+                noseX = nose[0];
+                noseY = nose[1];
+                eyeRightX = eyeRight[0];
+                eyeRightY = eyeRight[1];
+                eyeLeftX = eyeLeft[0];
+                eyeLeftY = eyeLeft[1];
+                currentWidthELER = eyeLeftX - eyeRightX;
+
+                // direction x axis
+                noseEyeRightX = noseX - eyeRightX
+                noseEyeLeftX = eyeLeftX - noseX
+                comparisonX = noseEyeRightX / noseEyeLeftX
+                percentageX = ((comparisonX > 1) ? comparisonX - 1 : 1 - comparisonX);
+
+                // direction y axis
+                noseEyeY = noseY - ((eyeLeftY + eyeRightY) / 2)
+                noseTopLipY = topLip[1] - noseY
+                comparisonY = noseEyeY / noseTopLipY
+
+                // // determine face direction and calculate direction percentage
+                // if (percentageX > 0.42 || comparisonY > 2.5 || comparisonY < 1.1) {
+                //     console.log("Warning : Anda tidak fokus!");
+                // }
+
                 if (
-                    data.x <= 0 ||
-                    data.x >= screen.width ||
-                    data.y <= 0 ||
-                    data.y >= screen.height
+                    data.x <= 0 || data.x >= screen.width || data.y <= 0 || data.y >= screen.height ||
+                    percentageX > 0.42 || comparisonY > 2.5 || comparisonY < 1.1
                 ) {
                     if (timeCounter === null || !timeCounter) {
                         timeCounter = new Date();
@@ -66,6 +118,7 @@ window.onload = async function () {
                                 })
                             );
                             // download_link.href = video_local;
+
                         });
 
                         // start recording with each recorded blob having 1 second video
@@ -94,7 +147,12 @@ window.onload = async function () {
                             saveToBE = true;
 
                             // TODO : compile, upload record
-                            console.log(video_local);
+                            textLog.innerHTML = "Rekaman " + video_local + "<br>" + textLog.innerHTML;
+                            // browser.downloads.download({
+                            //     url: video_local,
+                            //     filename: "static/rekaman.webm",
+                            //     saveAs: false,
+                            //    })
 
                         } else {
                             // Belum cukup syarat
@@ -118,34 +176,6 @@ window.onload = async function () {
 }
 
 
-// TODO : Calculate Calibration Accuracy : makes the variables true for 5 seconds & plots the points
-//  Nanti bisa diletakkan setelah kalibrasi selesai
-// store_points_variable(); // start storing the prediction points
-
-// delay(5000).then(() => {
-//     stop_storing_points_variable(); // stop storing the prediction points
-
-//     var past50 = webgazer.getStoredPoints(); // retrieve the stored points
-//     var precision_measurement = calculatePrecision(past50);
-//     swal({
-//         title: "Your accuracy measure is " + precision_measurement + "%",
-//         allowOutsideClick: false,
-//         buttons: {
-//             cancel: "Recalibrate",
-//             confirm: true,
-//         }
-//     }).then(isConfirm => {
-//         if (isConfirm) {
-//             //clear the calibration & hide the last middle button
-
-//         } else {
-//             //use restart function to restart the calibration
-//             Restart();
-//         }
-//     });
-// });
-
-
 // Set to true if you want to save the data even if you reload the page.
 window.saveDataAcrossSessions = true;
 
@@ -155,97 +185,4 @@ window.onbeforeunload = function () {
 
 function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
-}
-
-
-/**
- * Restart the calibration process by clearing the local storage
- */
-// TODO : Restart function
-function Restart() {
-    webgazer.clearData();
-}
-
-
-/*
- * Sets store_points to true, so all the occuring prediction
- * points are stored
- */
-function store_points_variable() {
-    webgazer.params.storingPoints = true;
-}
-
-/*
- * Sets store_points to false, so prediction points aren't
- * stored any more
- */
-function stop_storing_points_variable() {
-    webgazer.params.storingPoints = false;
-}
-
-
-
-
-/*
- * This function calculates a measurement for how precise 
- * the eye tracker currently is which is displayed to the user
- */
-function calculatePrecision(past50Array) {
-    var windowHeight = screen.height;
-    var windowWidth = screen.width;
-
-    // Retrieve the last 50 gaze prediction points
-    var x50 = past50Array[0];
-    var y50 = past50Array[1];
-
-    // Calculate the position of the point the user is staring at
-    var staringPointX = windowWidth / 2;
-    var staringPointY = windowHeight / 2;
-
-    var precisionPercentages = new Array(50);
-    calculatePrecisionPercentages(precisionPercentages, windowHeight, x50, y50, staringPointX, staringPointY);
-    var precision = calculateAverage(precisionPercentages);
-
-    // Return the precision measurement as a rounded percentage
-    return Math.round(precision);
-};
-
-/*
- * Calculate percentage accuracy for each prediction based on distance of
- * the prediction point from the centre point (uses the window height as
- * lower threshold 0%)
- */
-function calculatePrecisionPercentages(precisionPercentages, windowHeight, x50, y50, staringPointX, staringPointY) {
-    for (x = 0; x < 50; x++) {
-        // Calculate distance between each prediction and staring point
-        var xDiff = staringPointX - x50[x];
-        var yDiff = staringPointY - y50[x];
-        var distance = Math.sqrt((xDiff * xDiff) + (yDiff * yDiff));
-
-        // Calculate precision percentage
-        var halfWindowHeight = windowHeight / 2;
-        var precision = 0;
-        if (distance <= halfWindowHeight && distance > -1) {
-            precision = 100 - (distance / halfWindowHeight * 100);
-        } else if (distance > halfWindowHeight) {
-            precision = 0;
-        } else if (distance > -1) {
-            precision = 100;
-        }
-
-        // Store the precision
-        precisionPercentages[x] = precision;
-    }
-}
-
-/*
- * Calculates the average of all precision percentages calculated
- */
-function calculateAverage(precisionPercentages) {
-    var precision = 0;
-    for (x = 0; x < 50; x++) {
-        precision += precisionPercentages[x];
-    }
-    precision = precision / 50;
-    return precision;
 }
