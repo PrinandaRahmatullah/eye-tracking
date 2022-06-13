@@ -1,6 +1,6 @@
-# Real Time Eye Tracking Using WebGazer
+# Real Time Eye Tracking and Head Pose Estimation Using WebGazer
 
-Real time eye tracking on browser using webgazer
+Real-time eye tracking, head pose estimation, and face distance from screen. Implemented on browser using webgazer
 
 ## Requirements
 
