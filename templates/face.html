@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script defer src="static/js/face-api.min.js"></script>
+
+        <script defer src="static/js/face-script.js"></script>
+        <title>Demo Face Stream</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            canvas {
+                position: absolute;
+            }
+        </style>
+    </head>
+    <body>
+        <button id="compile" hidden>Compile</button>
+        <video id="video" width="720" height="560" autoplay muted></video>
+    </body>
+</html>

@@ -23,3 +23,8 @@ def lms_index():
 @lms_blueprint.route('/pure')
 def lms_eye():
     return render_template('calibration.html')
+
+
+@lms_blueprint.route('/face')
+def lms_face():
+    return render_template('face.html')
