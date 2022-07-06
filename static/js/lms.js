@@ -36,6 +36,8 @@ var noseEyeY = null;
 var noseTopLipY = null;
 var comparisonY = null;
 
+let maximumRecordTime = 7;
+
 window.onload = async function () {
     webgazer.showVideoPreview(false) /* shows all video previews */
         .showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
@@ -99,60 +101,70 @@ window.onload = async function () {
                         // console.log("Warning : Anda tidak fokus!");
                         recordOn = true;
 
-                        // set MIME type of recording as video/webm
-                        media_recorder = new MediaRecorder(camera_stream, {
-                            mimeType: "video/webm",
-                        });
+                        // // set MIME type of recording as video/webm
+                        // media_recorder = new MediaRecorder(camera_stream, {
+                        //     mimeType: "video/webm",
+                        // });
 
-                        // event : new recorded video blob available
-                        media_recorder.addEventListener("dataavailable", function (e) {
-                            blobs_recorded.push(e.data);
-                        });
+                        // // event : new recorded video blob available
+                        // media_recorder.addEventListener("dataavailable", function (e) {
+                        //     blobs_recorded.push(e.data);
+                        // });
 
-                        // event : recording stopped & all blobs sent
-                        media_recorder.addEventListener("stop", function () {
-                            // create local object URL from the recorded video blobs
-                            video_local = URL.createObjectURL(
-                                new Blob(blobs_recorded, {
-                                    type: "video/webm"
-                                })
-                            );
-                            // download_link.href = video_local;
+                        // // event : recording stopped & all blobs sent
+                        // media_recorder.addEventListener("stop", function () {
+                        //     // create local object URL from the recorded video blobs
+                        //     video_local = URL.createObjectURL(
+                        //         new Blob(blobs_recorded, {
+                        //             type: "video/webm"
+                        //         })
+                        //     );
+                        //     // download_link.href = video_local;
 
-                        });
+                        // });
 
-                        // start recording with each recorded blob having 1 second video
-                        media_recorder.start(1000);
+                        // // start recording with each recorded blob having 1 second video
+                        // media_recorder.start(1000);
 
 
                     }
+                    // New condition : to prevent large video recorded size
+                    else {
+                        let longRecords = parseFloat(new Date() - timeCounter) / 1000
 
+                        // hitung lama tidak fokus
+                        if (recordOn && longRecords >= maximumRecordTime) {
+                            textLog.innerHTML = "Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + longRecords + " seconds<br>" + textLog.innerHTML;
+
+                            saveToBE = true;
+                            recordOn = false;
+
+                            // // TODO : delete record
+                            // blobs_recorded = [];
+                        }
+                    }
                     focusState = false;
                 }
+
                 // back to focus
                 else {
                     if (timeCounter && timeCounter !== null) {
 
-                        // stop record
-                        media_recorder.stop();
+                        // // stop record
+                        // media_recorder.stop();
 
                         // timer on
                         let secondsDifference = parseFloat(
                             (new Date() - timeCounter) / 1000
                         );
 
-                        if (secondsDifference > 5) {
-                            // console.log("Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + secondsDifference + " seconds");
-                            textLog.innerHTML = "Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + secondsDifference + " seconds<br>" + textLog.innerHTML;
-                            saveToBE = true;
+                        if (secondsDifference > maximumRecordTime) {
+                            // // console.log("Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + secondsDifference + " seconds");
+                            // textLog.innerHTML = "Warning : Anda dicuragai menyontek! Compile and Upload recorded data! - " + secondsDifference + " seconds<br>" + textLog.innerHTML;
+                            // saveToBE = true;
 
-                            // TODO : compile, upload record
-                            textLog.innerHTML = "Rekaman " + video_local + "<br>" + textLog.innerHTML;
-                            // browser.downloads.download({
-                            //     url: video_local,
-                            //     filename: "static/rekaman.webm",
-                            //     saveAs: false,
-                            //    })
+                            // // TODO : compile, upload record
+                            // textLog.innerHTML = "Rekaman " + video_local + "<br>" + textLog.innerHTML;
 
                         } else {
                             // Belum cukup syarat
@@ -162,8 +174,8 @@ window.onload = async function () {
                         timeCounter = null;
                         recordOn = false;
 
-                        // TODO : delete record
-                        blobs_recorded = [];
+                        // // TODO : delete record
+                        // blobs_recorded = [];
                     }
 
                     focusState = true;
