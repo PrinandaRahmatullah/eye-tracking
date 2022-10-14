@@ -1,0 +1,9 @@
+Face Direction and Face Distance Analysis
+
+1. Tentukan posisi mata kiri dan kanan serta hidung
+2. Hitung jarak antara mata kiri dan kanan terjauh dan terdekat
+3. Untuk mengetahui posisi steady, hitung jarak terjauh selama 1-3 detik
+4. Jarak terjauh sebagai 0%, dan jarak 0 mata kiri&kanan sebagai menghadap 100%
+
+
+1. Bandingkan jarak antara hidung-mata kiri dan hidung-mata kanan
