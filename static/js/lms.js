@@ -85,7 +85,8 @@ window.onload = async function () {
                 noseEyeY = noseY - ((eyeLeftY + eyeRightY) / 2)
                 noseTopLipY = topLip[1] - noseY
                 comparisonY = noseEyeY / noseTopLipY
-
+                var c = 210 * 22.5;
+                console.log(c / currentWidthELER);
                 // // determine face direction and calculate direction percentage
                 // if (percentageX > 0.42 || comparisonY > 2.5 || comparisonY < 1.1) {
                 //     console.log("Warning : Anda tidak fokus!");
