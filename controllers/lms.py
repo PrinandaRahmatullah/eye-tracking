@@ -26,6 +26,11 @@ def load_shard1():
 
 
 @lms_blueprint.route('/')
+def lms_distance():
+    return render_template('distance.html')
+
+
+@lms_blueprint.route('/lms')
 def lms_index():
     return render_template('custom.html')
 
