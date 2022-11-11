@@ -40,7 +40,7 @@ var comparisonY = null;
 let maximumRecordTime = 7;
 
 window.onload = async function () {
-    webgazer.showVideoPreview(false) /* shows all video previews */
+    await webgazer.showVideoPreview(false) /* shows all video previews */
         .showPredictionPoints(true) /* shows a square every 100 milliseconds where current prediction is */
         .applyKalmanFilter(true);
 
