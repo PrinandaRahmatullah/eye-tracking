@@ -86,7 +86,8 @@ window.onload = async function () {
                 noseTopLipY = topLip[1] - noseY
                 comparisonY = noseEyeY / noseTopLipY
                 var c = 210 * 22.5;
-                console.log(c / currentWidthELER);
+                // console.log(c / currentWidthELER); // To check distance between face and screen
+                // console.log(percentageX) // To check percent of head pose or rotation
                 // // determine face direction and calculate direction percentage
                 // if (percentageX > 0.42 || comparisonY > 2.5 || comparisonY < 1.1) {
                 //     console.log("Warning : Anda tidak fokus!");
@@ -94,7 +95,7 @@ window.onload = async function () {
 
                 if (
                     data.x <= 0 || data.x >= screen.width || data.y <= 0 || data.y >= screen.height ||
-                    percentageX > 0.42 || comparisonY > 2.5 || comparisonY < 1.1
+                    percentageX > 0.41 || comparisonY > 2.3 || comparisonY < 1.35
                 ) {
                     if (timeCounter === null || !timeCounter) {
                         timeCounter = new Date();
